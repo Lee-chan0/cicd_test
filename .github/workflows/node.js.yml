@@ -1,4 +1,5 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code, and run tests across different versions of node
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code,
+# and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 # workflow의 제목
@@ -63,11 +64,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_PRIVATE_ACCESS_KEY }}
           # 지역 설정 : 서울
           aws-region: ap-northeast-2
+
       # S3로 업로드하기
       - name: upload to S3
         run: aws s3 cp --region ap-northeast-2 ./CI.zip s3://my-git-cicd/deploy/
 
-# codeDeploy 실행
       # codeDeploy 실행
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
