@@ -63,19 +63,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_PRIVATE_ACCESS_KEY }}
           # 지역 설정 : 서울
           aws-region: ap-northeast-2
-
       # S3로 업로드하기
       - name: upload to S3
-        # --region = 지역 설정
-        # ./CI.zip = 보낼 압축 파일 작성
-        # s3://(S3 Bucket 이름)/(하위 폴더 작성)/
         run: aws s3 cp --region ap-northeast-2 ./CI.zip s3://my-git-cicd/deploy/
 
 # codeDeploy 실행
-- name: deploy with AWS codeDeploy
-  run: |
-    aws deploy create-deployment \
-      --application-name cicd_codedeploy-app \
-      --deployment-config-name CodeDeployDefault.OneAtATime \
-      --deployment-group-name my_codedeploy-deployment-group \
-      --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
+      # codeDeploy 실행
+      - name: deploy with AWS codeDeploy
+        run: aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
