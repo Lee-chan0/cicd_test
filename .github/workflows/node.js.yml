@@ -5,65 +5,44 @@
 name: Node.js CI
 
 on:
-
   push:
-
     branches: [ "main" ]
-
   pull_request:
     branches: [ "main" ]
 
-
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
-
       matrix:
-
         node-version: [14.x, 16.x, 18.x]
 
-
-
     steps:
-
       - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn' 
+          cache: 'yarn'
 
       - name: Yarn Install
         run: |
           yarn config set cache-folder .yarn-cache
           yarn install
 
-
       - name: zip file
         run: zip -r CI.zip ./src/* ./prisma/* ./package.json ./yarn.lock ./appspec.yml
-
 
       - name: AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-
           aws-secret-access-key: ${{ secrets.AWS_PRIVATE_ACCESS_KEY }}
-
           aws-region: ap-northeast-2
-
 
       - name: upload to S3
         run: aws s3 cp --region ap-northeast-2 ./CI.zip s3://my-git-cicd/deploy/
 
-
       - name: deploy with AWS codeDeploy
-        run: |
-          aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
+        run: aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
