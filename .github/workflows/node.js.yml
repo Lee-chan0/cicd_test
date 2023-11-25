@@ -71,17 +71,11 @@ jobs:
         # s3://(S3 Bucket 이름)/(하위 폴더 작성)/
         run: aws s3 cp --region ap-northeast-2 ./CI.zip s3://my-git-cicd/deploy/
 
-      # codeDeploy 실행
-      - name: deploy with AWS codeDeploy
-        run: aws deploy create-deployment
-          #application-name = deployment 애플리케이션 이름 작성
-          --application-name cicd_codedeploy-app
-          # deployment-config-name Group의 배포 구성 작성
-          # CodeDeployDefault.fiOneAtATime
-          --deployment-config-name CodeDeployDefault.OneAtATime
-          # deployment-group-name : 배포 그룹 이름 작성
-          --deployment-group-name my_codedeploy-deployment-group
-          # s3-location bucket=(S3버킷 이름 작성)
-          # bundleType=(배포할 파일의 형태 작성), 우리는 zip으로 압축했으니 zip을 써준다
-          # key = (S3 하위폴더)/(배포할 파일 작성)
-          --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
+# codeDeploy 실행
+- name: deploy with AWS codeDeploy
+  run: |
+    aws deploy create-deployment \
+      --application-name cicd_codedeploy-app \
+      --deployment-config-name CodeDeployDefault.OneAtATime \
+      --deployment-group-name my_codedeploy-deployment-group \
+      --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
