@@ -71,4 +71,5 @@ jobs:
 
       # codeDeploy 실행
       - name: deploy with AWS codeDeploy
-        run: aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
+        run: |
+          aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
