@@ -7,21 +7,28 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # 현재 버전의 GitHub Actions에서는 Node.js 16까지 지원
-
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]  # 필요에 따라 다른 버전을 추가할 수 있음
-
+  build-16:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set Up Node.js ${{ matrix.node-version }}
+      - name: Set Up Node.js 16
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16
+          cache: 'yarn'
+
+  build-18:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
           cache: 'yarn'
 
       - name: Install Dependencies
