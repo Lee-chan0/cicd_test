@@ -8,10 +8,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 현재 버전의 GitHub Actions에서는 Node.js 16까지 지원
+
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [16.x, 18.x]  # 필요에 따라 다른 버전을 추가할 수 있음
 
     steps:
       - name: Checkout Repository
@@ -20,10 +21,8 @@ jobs:
       - name: Set Up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: '18.17.1'  # 예시로 Node.js 18.x로 설정
+          node-version: ${{ matrix.node-version }}
           cache: 'yarn'
-
-        
 
       - name: Install Dependencies
         run: |
@@ -44,4 +43,4 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 ./CI.zip s3://my-git-cicd/deploy/
 
       - name: Deploy with AWS CodeDeploy
-        run: aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip
+        run: aws deploy create-deployment --application-name cicd_codedeploy-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name my_codedeploy-deployment-group --s3-location bucket=my-git-cicd,bundleType=zip,key=deploy/CI.zip --wait
